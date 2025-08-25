@@ -1,0 +1,328 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // Construtor do App
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Define o tema do aplicativo no Android
+    return MaterialApp(
+      title: 'Flutinho',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+
+      initialRoute: '/', // raiz
+
+      routes: {
+        '/': (context) => const HomePage(),
+        '/contacts': (context) => const ContactsPage(),
+        '/search': (context) => const SearchPage(),
+        '/info': (context) => const InfoPage(),
+        '/privacy': (context) => const PrivacyPage(),
+      },
+    );
+  }
+}
+
+// Página inicial
+class HomePage extends StatelessWidget {
+  // Construtor
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Barra superior
+      appBar: AppBar(
+        title: Text(
+          "Flutinho",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
+
+      // Corpo da página com conteúdo centralizado
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // Widgets de Column
+          children: [
+            const Text('Esta é uma Página Stateless!'),
+            const SizedBox(height: 20),
+            const Text('Essa é a página inicial'),
+          ],
+        ),
+      ),
+
+      // Barra inferior (footer)
+      bottomNavigationBar: BottomAppBar(
+        padding: EdgeInsetsGeometry.zero,
+        color: Colors.grey[800], // Cor de fundo do BottomAppBar
+        // Ajuste a altura do BottomAppBar envolvendo o Row em um SizedBox
+        child: SizedBox(
+          // Defina a altura desejada aqui (valor padrão é 56.0)
+          height: 0.0,
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            // Distribui os itens uniformemente
+            children: <Widget>[
+              IconButton(
+                // Cor do ícone
+                color: Colors.white,
+                // Ao passar mouse
+                hoverColor: Colors.orange,
+                // Ao pressionar
+                highlightColor: Colors.black,
+                // Ícone de casa
+                icon: const Icon(Icons.home),
+                // Tamanho do ícone
+                iconSize: 30.0,
+                // Ao para o moue, mostra o text
+                tooltip: 'Página Inicial',
+                // Navegar para a página inicial.
+                onPressed: () {
+                  Navigator.pushNamed(context, '/');
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.search),
+                color: Colors.white,
+                hoverColor: Colors.orange,
+                highlightColor: Colors.black,
+                iconSize: 30.0,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/search');
+                },
+                // onPressed
+                tooltip: 'Pesquisar',
+              ),
+              IconButton(
+                icon: const Icon(Icons.info),
+                color: Colors.white,
+                hoverColor: Colors.orange,
+                highlightColor: Colors.black,
+                iconSize: 30.0,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/info');
+                },
+                // onPressed
+                tooltip: 'Informações',
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      // Menu lateral (hamburger)
+      drawer: Drawer(
+        child: Column(
+          children: [
+            const DrawerHeader(
+              child: Center(
+                child: Text(
+                  "Flutinho",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0),
+                ),
+              ),
+            ),
+
+            // Acesso à página inicial → '/'
+            ListTile(
+              title: const Text('Inicio'),
+              leading: const Icon(Icons.home),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/');
+              },
+            ),
+
+            // Acesso à página de contatos → '/contacts'
+            ListTile(
+              title: const Text('Contatos'),
+              leading: const Icon(Icons.contact_mail),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/contacts');
+              },
+            ),
+
+            // Linha divisória
+            const Divider(),
+
+            // Acesso à página de informações → '/info'
+            ListTile(
+              title: const Text('Informações'),
+              leading: const Icon(Icons.info),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/info');
+              },
+            ),
+
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: Text(
+                    '© 2025 Joca da Silva\nTodos os direitos reservados',
+                    style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Protótipo da ppágina de contatos
+class ContactsPage extends StatelessWidget {
+  const ContactsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Faça Contato',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
+
+      // Corpo da página com conteúdo centralizado
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // Widgets de Column
+          children: [
+            const Text('Esta é uma Página Stateless!'),
+            const SizedBox(height: 20),
+            const Text('Essa é a página de contatos'),
+          ],
+        ),
+      ),
+
+      drawer: Drawer(
+        child: Column(
+          children: [
+            const DrawerHeader(
+              child: Center(
+                child: Text(
+                  "Flutinho",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0),
+                ),
+              ),
+            ),
+
+            // Acesso à página inicial → '/'
+            ListTile(
+              title: const Text('Inicio'),
+              leading: const Icon(Icons.home),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/');
+              },
+            ),
+
+            // Acesso à página de contatos → '/contacts'
+            ListTile(
+              title: const Text('Contatos'),
+              leading: const Icon(Icons.contact_mail),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/contacts');
+              },
+            ),
+
+            // Linha divisória
+            const Divider(),
+
+            // Acesso à página de informações → '/info'
+            ListTile(
+              title: const Text('Informações'),
+              leading: const Icon(Icons.info),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/info');
+              },
+            ),
+
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: Text(
+                    '© 2025 Joca da Silva\nTodos os direitos reservados',
+                    style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Protótipo da ppágina de contatos
+class SearchPage extends StatelessWidget {
+  const SearchPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+}
+
+// Protótipo da ppágina de contatos
+class InfoPage extends StatelessWidget {
+  const InfoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Corpo da página com conteúdo centralizado
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // Widgets de Column
+          children: [
+            const Text('Esta é uma Página Stateless!'),
+            const SizedBox(height: 20),
+            const Text('Essa é a página de informações'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Protótipo de Políticas de Privacidade
+class PrivacyPage extends StatelessWidget {
+  const PrivacyPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+}
