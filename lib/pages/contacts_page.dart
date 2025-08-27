@@ -16,10 +16,25 @@ import '../template/myfooter.dart';
 
 var pageName = 'Faça Contato';
 
-// Página inicial
-class ContactsPage extends StatelessWidget {
-  // Construtor
+// Página de Contatos do tipo StatefulWidget.
+// Esta página contém um formulário para coletar informações de contato.
+class ContactsPage extends StatefulWidget {
+  // Construtor da classe ContactsPage.
   const ContactsPage({super.key});
+
+  @override
+  // createState é chamado para criar o estado mutável para este widget.
+  // Ele retorna uma instância da classe de estado associada (_ContactsPage).
+  State<ContactsPage> createState() => _ContactsPage();
+}
+
+// A classe de estado associada a ContactsPage.
+// Ela contém o estado mutável e a lógica de construção da interface do usuário,
+// incluindo o formulário de contatos, validações e manipulação de entrada.
+class _ContactsPage extends State<ContactsPage> {
+  // Chave global para o formulário de contatos.
+  // GlobalKey permite que você acesse o estado do formulário e chame métodos como 'validate()'.
+  final GlobalKey<FormState> _contactsFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
