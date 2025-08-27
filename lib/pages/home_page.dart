@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import '../template/config.dart';
 import '../template/myfooter.dart';
 
+var pageName = Config.appName;
+
 // Página inicial
 class HomePage extends StatelessWidget {
   // Construtor
@@ -31,7 +33,7 @@ class HomePage extends StatelessWidget {
               Expanded(
                 // Usei um Scaffold aninhado para ter uma AppBar na página
                 child: Scaffold(
-                  appBar: const MyAppBar(title: Config.appName),
+                  appBar: MyAppBar(title: pageName),
                   // O conteúdo principal da página
                   body: Center(child: PageContent()),
                 ),
@@ -41,7 +43,7 @@ class HomePage extends StatelessWidget {
         } else {
           // Versão para mobile/tablet
           return Scaffold(
-            appBar: const MyAppBar(title: Config.appName),
+            appBar: MyAppBar(title: pageName),
             drawer: const MyDrawer(), // O menu deslizante
             body: Center(child: PageContent()),
           );
