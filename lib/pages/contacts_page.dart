@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import '../template/config.dart';
 import '../template/myappbar.dart';
 import '../template/myfooter.dart';
+import '../template/mydrawer.dart'; // Importa o menu lateral
 
 // Instância privada (private) do Dio
 final Dio _dio = Dio();
@@ -58,23 +59,61 @@ class _ContactsPage extends State<ContactsPage> {
   @override
   // O método build descreve a interface do usuário para esta página.
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(title: pageName),
-      // Corpo da página, contendo o formulário de contatos.
-      body: SingleChildScrollView(
-        // SingleChildScrollView garante que a tela role quando o teclado aparecer,
-        // evitando que os campos de texto fiquem ocultos.
-        padding: const EdgeInsets.all(32.0),
-        // Adiciona preenchimento em toda a volta do conteúdo.
+    // LayoutBuilder permite ajustar o conteúdo para resoluções diferentes
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Se a largura é de 1080+
+        if (constraints.maxWidth > 1080) {
+          // Versão para desktop com menu lateral fixo
+          return Row(
+            children: [
+              const MyDrawer(), // O menu lateral fixo
+              Expanded(
+                // O Scaffold aninhado para ter a AppBar na página de conteúdo
+                child: Scaffold(
+                  appBar: MyAppBar(title: pageName),
+                  body: SingleChildScrollView(
+                    // SingleChildScrollView garante que a tela role quando o teclado aparecer,
+                    // evitando que os campos de texto fiquem ocultos.
+                    padding: const EdgeInsets.all(32.0),
+                    // Adiciona preenchimento em toda a volta do conteúdo.
+                    child: _buildContactForm(),
+                  ),
+                  bottomNavigationBar: const MyBottomNavBar(),
+                ),
+              ),
+            ],
+          );
+        } else {
+          // Versão para mobile/tablet com menu deslizante
+          return Scaffold(
+            appBar: MyAppBar(title: pageName),
+            drawer: const MyDrawer(), // O menu deslizante
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(32.0),
+              child: _buildContactForm(),
+            ),
+            bottomNavigationBar: const MyBottomNavBar(),
+          );
+        }
+      },
+    );
+  }
+
+  // Método auxiliar para construir o formulário de contato,
+  // reutilizável em ambas as versões (desktop e mobile).
+  Widget _buildContactForm() {
+    return Center(
+      // Centraliza o formulário na tela
+      child: SizedBox(
+        width: 540, // Limita a largura máxima do formulário
         child: Form(
           key: _contactsFormKey, // Associa a chave global ao formulário.
           child: Column(
             // Estica os campos horizontalmente para preencher a largura disponível.
             crossAxisAlignment: CrossAxisAlignment.stretch,
-
             children: <Widget>[
               const Text(
-                // Adicionado 'const'.
                 'Preencha todos os campos abaixo para entrar em contato conosco.',
               ),
               const SizedBox(height: 20.0), // Espaçamento vertical.
@@ -87,128 +126,86 @@ class _ContactsPage extends State<ContactsPage> {
                   border: OutlineInputBorder(), // Borda ao redor do campo.
                   prefixIcon: Icon(Icons.person), // Ícone à esquerda do campo.
                 ),
-
                 // Validação do nome.
-                // O validador retorna uma mensagem de erro (String) se a entrada for inválida,
-                // ou null se a entrada for válida.
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, escreva seu nome.';
                   }
-                  // Retorne null se a validação passar.
                   return null;
                 },
               ),
-
-              // Espaçamento entre os campos.
-              const SizedBox(height: 20.0),
-
+              const SizedBox(height: 20.0), // Espaçamento entre os campos.
               // Campo E-mail.
               TextFormField(
-                // Controlador associado.
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'E-mail',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
-                // Define o tipo de teclado para e-mail (otimiza para Android e iOS).
                 keyboardType: TextInputType.emailAddress,
-
-                // Validação do email.
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, escreva seu e-mail.';
                   }
-                  // Validação de e-mail usando a expressão regular.
                   if (!Config.emailRegex.hasMatch(value)) {
                     return 'Por favor, insira um email válido.';
                   }
-                  // Retorne null se a validação passar.
                   return null;
                 },
               ),
-              // Espaçamento entre os campos.
               const SizedBox(height: 20.0),
-
               // Campo Assunto (subject).
               TextFormField(
-                // Controlador associado.
                 controller: _subjectController,
                 decoration: const InputDecoration(
                   labelText: 'Assunto',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.subject),
                 ),
-
-                // Validação do assunto.
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, escreva o assunto.'; // Corrigido o texto da mensagem.
+                    return 'Por favor, escreva o assunto.';
                   }
-                  // Retorne null se a validação passar.
                   return null;
                 },
               ),
-              // Espaçamento entre os campos.
               const SizedBox(height: 20.0),
-
               // Campo Mensagem (message).
               TextFormField(
-                // Controlador associado.
                 controller: _messageController,
                 decoration: const InputDecoration(
                   labelText: 'Mensagem',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.message),
-                  // Alinha o label com o hint em múltiplas linhas.
                   alignLabelWithHint: true,
                 ),
-
-                // Permite múltiplas linhas para a mensagem.
                 maxLines: 5,
-
-                // Define o tipo de teclado para múltiplas linhas (otimiza para Android).
                 keyboardType: TextInputType.multiline,
-
-                // Validação da mensagem.
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, escreva sua mensagem.'; // Corrigido o texto da mensagem.
+                    return 'Por favor, escreva sua mensagem.';
                   }
-
-                  // Retorne null se a validação passar.
                   return null;
                 },
               ),
-
-              // Espaçamento entre os campos.
               const SizedBox(height: 20.0),
-
               // Botão de Enviar.
               ElevatedButton.icon(
-                onPressed: () {
-                  // Ação ao pressionar o botão: chama o método de envio do formulário.
-                  _submitContactForm();
-                },
-                icon: const Icon(Icons.send), // Ícone do botão.
-                label: const Text('Enviar'), // Texto do botão.
+                onPressed: _submitContactForm,
+                icon: const Icon(Icons.send),
+                label: const Text('Enviar'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  // Preenchimento interno do botão.
                   textStyle: const TextStyle(fontSize: 18),
-                  // Estilo do texto do botão.
                   backgroundColor: Colors.blue[600],
-                  // Cor de fundo do botão.
-                  foregroundColor:
-                  Colors.white, // Cor do texto e ícone do botão.
+                  foregroundColor: Colors.white,
                 ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: MyBottomNavBar(),
     );
   }
 
@@ -216,19 +213,14 @@ class _ContactsPage extends State<ContactsPage> {
   // É assíncrono porque realiza uma operação de rede (HTTP POST).
   void _submitContactForm() async {
     // 1. Validação do Formulário:
-    // Verifica se todos os campos do formulário são válidos
-    // de acordo com as regras de 'validator' definidas nos TextFormField.
     if (_contactsFormKey.currentState!.validate()) {
       // 2. Coleta dos Dados:
-      // Pega o texto atual de cada controlador de campo.
       final name = _nameController.text;
       final email = _emailController.text;
       final subject = _subjectController.text;
       final message = _messageController.text;
 
       // 3. Formatação dos Dados para JSON:
-      // Cria um mapa (chave-valor) com os dados do formulário.
-      // As chaves ('name', 'email', etc.) devem corresponder ao que sua API espera.
       final Map<String, String> formData = {
         'name': name,
         'email': email,
@@ -237,61 +229,47 @@ class _ContactsPage extends State<ContactsPage> {
       };
 
       // 5. Bloco de Envio e Tratamento de Erros:
-      // Usa um bloco try-catch para gerenciar possíveis erros durante a requisição de rede.
       try {
         // 5.1. Realiza a Requisição POST com Dio:
-        // Envia os dados formatados (Map formData) para a apiUrl.
-        // Dio automaticamente converte o 'Map' em JSON para o corpo da requisição.
         final Response response = await _dio.post(
           Config.endPoint['contact'],
           data: formData,
-          // Define o cabeçalho 'Content-Type' como JSON, informando à API o formato dos dados.
           options: Options(contentType: Headers.jsonContentType),
         );
 
         // 5.2. Verificação de 'mounted':
-        // Garante que o widget ainda está ativo na árvore de widgets antes de usar 'context'.
-        // Isso evita erros se o usuário sair da tela antes da resposta da API.
         if (!mounted) return;
 
         // 5.3. Processamento da Resposta da API:
-        // Verifica o código de status HTTP da resposta.
-        // 200 (OK) ou 201 (Created) geralmente indicam sucesso.
         if (response.statusCode == 200 || response.statusCode == 201) {
-          // Exibe uma mensagem de sucesso na parte inferior da tela.
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Mensagem enviada com sucesso!')),
+            const SnackBar(
+              content: Text('Mensagem enviada com sucesso!'),
+              backgroundColor: Colors.green,
+            ),
           );
-          // Limpa os campos do formulário para uma nova entrada.
           _nameController.clear();
           _emailController.clear();
           _subjectController.clear();
           _messageController.clear();
         } else {
-          // Se o status não for de sucesso, indica um erro vindo da API.
-          // Imprime detalhes do erro no console apenas em modo de depuração (kDebugMode).
           if (kDebugMode) {
             print('Erro ao enviar mensagem: ${response.statusCode}');
             print('Corpo da resposta: ${response.data}');
           }
-          // Exibe uma mensagem de falha com o código de status.
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 'Falha ao enviar mensagem. Status: ${response.statusCode}',
               ),
+              backgroundColor: Colors.red,
             ),
           );
         }
       } on DioException catch (e) {
         // 5.4. Tratamento de Erros Específicos do Dio:
-        // Captura exceções lançadas pelo Dio (ex: erros de rede, timeout, etc.).
-
-        // Verifica 'mounted' novamente antes de usar 'context'.
         if (!mounted) return;
-
         if (e.response != null) {
-          // Erro com resposta do servidor (ex: 404 Not Found, 500 Internal Server Error).
           if (kDebugMode) {
             print('Erro de resposta do Dio: ${e.response!.statusCode}');
             print('Dados do erro: ${e.response!.data}');
@@ -301,10 +279,10 @@ class _ContactsPage extends State<ContactsPage> {
               content: Text(
                 'Falha ao enviar. Erro do servidor: ${e.response!.statusCode}',
               ),
+              backgroundColor: Colors.red,
             ),
           );
         } else {
-          // Erro sem resposta do servidor (ex: problema de conexão à internet, URL incorreta).
           if (kDebugMode) {
             print('Erro de conexão ou configuração do Dio: $e');
           }
@@ -313,29 +291,29 @@ class _ContactsPage extends State<ContactsPage> {
               content: Text(
                 'Erro de conexão. Verifique sua rede e o servidor.',
               ),
+              backgroundColor: Colors.red,
             ),
           );
         }
       } catch (e) {
         // 5.5. Tratamento de Outros Erros Inesperados:
-        // Captura qualquer outra exceção que não seja do tipo DioException.
-
-        // Verifica 'mounted' antes de usar 'context'.
         if (!mounted) return;
-
         if (kDebugMode) {
           print('Erro inesperado: $e');
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ocorreu um erro inesperado.')),
+          const SnackBar(
+            content: Text('Ocorreu um erro inesperado.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } else {
       // 6. Feedback de Validação Falha:
-      // Se o formulário não for válido (algum campo não passou na validação).
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, preencha todos os campos corretamente.'),
+          backgroundColor: Colors.red,
         ),
       );
     }
