@@ -16,15 +16,17 @@ import '../template/myfooter.dart';
 
 var pageName = Config.appName;
 
-// Página inicial
+// Página inicial do aplicativo
 class HomePage extends StatelessWidget {
   // Construtor
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // LayoutBuilder permite ajustar o conteúdo para resoluções diferentes
     return LayoutBuilder(
       builder: (context, constraints) {
+        // Se a largura é de 1080+
         if (constraints.maxWidth > 1080) {
           // Versão para desktop
           return Row(
@@ -53,7 +55,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Conteúdo da página atual
+// Conteúdo da página atual a ser usado em qualquer resolução
 class PageContent extends StatelessWidget {
   // Parâmetro com valor padrão 'false'
   final bool showTitle;

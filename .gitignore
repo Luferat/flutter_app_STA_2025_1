@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Ignorar a pasta node_modules dentro de apifake
+apifake/node_modules/
