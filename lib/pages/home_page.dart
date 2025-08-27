@@ -14,8 +14,6 @@ import 'package:flutter/material.dart';
 import '../template/config.dart';
 import '../template/myfooter.dart';
 
-final pageName = Config.appName;
-
 // Página inicial
 class HomePage extends StatelessWidget {
   // Construtor
@@ -23,28 +21,58 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Barra superior
-      appBar: MyAppBar(title: pageName,),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 1080) {
+          // Versão para desktop
+          return Row(
+            children: [
+              const MyDrawer(), // O menu lateral fixo
+              Expanded(
+                // Usei um Scaffold aninhado para ter uma AppBar na página
+                child: Scaffold(
+                  appBar: const MyAppBar(title: Config.appName),
+                  // O conteúdo principal da página
+                  body: Center(child: PageContent()),
+                ),
+              ),
+            ],
+          );
+        } else {
+          // Versão para mobile/tablet
+          return Scaffold(
+            appBar: const MyAppBar(title: Config.appName),
+            drawer: const MyDrawer(), // O menu deslizante
+            body: Center(child: PageContent()),
+          );
+        }
+      },
+    );
+  }
+}
 
-      // Corpo da página com conteúdo centralizado
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          // Widgets de Column
-          children: [
-            const Text('Esta é uma Página Stateless!'),
-            const SizedBox(height: 20),
-            const Text('Essa é a página inicial'),
-          ],
-        ),
-      ),
+// Conteúdo da página atual
+class PageContent extends StatelessWidget {
+  // Parâmetro com valor padrão 'false'
+  final bool showTitle;
 
-      // Barra inferior (footer)
-      bottomNavigationBar: MyBottomNavBar(),
+  const PageContent({super.key, this.showTitle = false});
 
-      // Menu lateral (hamburger)
-      drawer: MyDrawer(),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // A sintaxe "if" em uma coleção (collection if)
+        if (showTitle)
+          const Text(
+            Config.appName,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        const Text('Esta é uma Página Stateless!'),
+        const SizedBox(height: 20),
+        const Text('Essa é a página principal'),
+      ],
     );
   }
 }
