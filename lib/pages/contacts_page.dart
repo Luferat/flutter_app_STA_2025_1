@@ -11,6 +11,7 @@ import '../template/config.dart';
 import '../template/myappbar.dart';
 import '../template/myfooter.dart';
 import '../template/mydrawer.dart'; // Importa o menu lateral
+import '../template/appTools.dart';
 
 // Instância privada (private) do Dio
 final Dio _dio = Dio();
@@ -79,7 +80,7 @@ class _ContactsPage extends State<ContactsPage> {
                     // Adiciona preenchimento em toda a volta do conteúdo.
                     child: _buildContactForm(),
                   ),
-                  bottomNavigationBar: const MyBottomNavBar(),
+                  // bottomNavigationBar: const MyBottomNavBar(),
                 ),
               ),
             ],
@@ -245,79 +246,49 @@ class _ContactsPage extends State<ContactsPage> {
 
         // 5.3. Processamento da Resposta da API:
         if (response.statusCode == 200 || response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Mensagem enviada com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
+          showSnackBar(
+            context,
+            'Mensagem enviada com sucesso!',
+            color: Colors.green,
           );
           _nameController.clear();
           _emailController.clear();
           _subjectController.clear();
           _messageController.clear();
         } else {
-          if (kDebugMode) {
-            print('Erro ao enviar mensagem: ${response.statusCode}');
-            print('Corpo da resposta: ${response.data}');
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Falha ao enviar mensagem. Status: ${response.statusCode}',
-              ),
-              backgroundColor: Colors.red,
-            ),
+          showSnackBar(
+            context,
+            'Falha ao enviar mensagem. Status: ${response.statusCode}',
+            color: Colors.red,
           );
         }
       } on DioException catch (e) {
         // 5.4. Tratamento de Erros Específicos do Dio:
         if (!mounted) return;
         if (e.response != null) {
-          if (kDebugMode) {
-            print('Erro de resposta do Dio: ${e.response!.statusCode}');
-            print('Dados do erro: ${e.response!.data}');
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Falha ao enviar. Erro do servidor: ${e.response!.statusCode}',
-              ),
-              backgroundColor: Colors.red,
-            ),
+          showSnackBar(
+            context,
+            'Falha ao enviar. Erro do servidor: ${e.response!.statusCode}',
+            color: Colors.red,
           );
         } else {
-          if (kDebugMode) {
-            print('Erro de conexão ou configuração do Dio: $e');
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Erro de conexão. Verifique sua rede e o servidor.',
-              ),
-              backgroundColor: Colors.red,
-            ),
+          showSnackBar(
+            context,
+            'Erro de conexão. Verifique sua rede e o servidor.',
+            color: Colors.red,
           );
         }
       } catch (e) {
         // 5.5. Tratamento de Outros Erros Inesperados:
         if (!mounted) return;
-        if (kDebugMode) {
-          print('Erro inesperado: $e');
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Ocorreu um erro inesperado.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        showSnackBar(context, 'Ocorreu um erro inesperado.', color: Colors.red);
       }
     } else {
       // 6. Feedback de Validação Falha:
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, preencha todos os campos corretamente.'),
-          backgroundColor: Colors.red,
-        ),
+      showSnackBar(
+        context,
+        'Por favor, preencha todos os campos corretamente.',
+        color: Colors.red,
       );
     }
   }
