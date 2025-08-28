@@ -220,6 +220,9 @@ class _ContactsPage extends State<ContactsPage> {
       final subject = _subjectController.text;
       final message = _messageController.text;
 
+      // Pré validação entraria aqui
+      // Por exemplo evitar SQL Injection
+
       // 3. Formatação dos Dados para JSON:
       final Map<String, String> formData = {
         'name': name,
